@@ -11,7 +11,9 @@ import datetime
 
 def deleteBackups(pattern, keep):
     pass
-    #directoryList=
+    directoryList= os.listdir(backupDir)
+    if(directoryList):
+        directoryList.sort()
 
 def doBackup(sourceDir, backupDir, name="", keep=0):
     datetimeString= (datetime.datetime.now()).strftime("%Y-%m-%d_%H-%M-%S")
@@ -29,13 +31,14 @@ def doBackup(sourceDir, backupDir, name="", keep=0):
     
     os.system(
         "rsync -av " +
-        "--link-dest " + "..\\" + latestBackup + " " +
+        "--link-dest " + ".\\..\\" + latestBackup + " " +
         ".\\" + sourceDir + " " +
         ".\\" + backupDir + "\\" + datetimeString + name
     )
 
 
-    # deleteBackups(name, keep)
+    if(keep > 0):
+        deleteBackups(name, keep)
 
 def main():
     sourceDir= "testOrdner"
