@@ -1,33 +1,46 @@
 #!/usr/bin/env python3
 
+# TODO
+# OS compatability
+# keep Variable -> keep certain amount of backups, delete the rest
+# argparse
+# --delete flag
+
 import os
 import datetime
 
-def doBackup(sourceDir, backupDir):
-    datetimeString= (datetime.datetime.now()).strftime("%Y-%m-%d_%H-%M-%S")
+def deleteBackups(pattern, keep):
+    pass
+    #directoryList=
 
-    if not os.path.exists(backupDir + "/" + datetimeString + "_new"):
-        os.makedirs(backupDir + "/" + datetimeString)
+def doBackup(sourceDir, backupDir, name="", keep=0):
+    datetimeString= (datetime.datetime.now()).strftime("%Y-%m-%d_%H-%M-%S")
+    if(name != ""):
+        name= "_" + name
+
+    if not os.path.exists(backupDir):
+        os.makedirs(backupDir)
 
     latestBackup= "placeholder"
-    if os.path.exists(backupDir + "/" + "latestBackup"):
-        latestBackup= "latestBackup"
+    directoryList= os.listdir(backupDir)
+    if(directoryList):
+        latestBackup= max(directoryList)        
 
+    
     os.system(
-        "rsync -av " + 
+        "rsync -av " +
         "--link-dest " + "..\\" + latestBackup + " " +
-        sourceDir + " " +
-        backupDir + "\\" + datetimeString
+        ".\\" + sourceDir + " " +
+        ".\\" + backupDir + "\\" + datetimeString + name
     )
 
-    os.system("rmdir " + backupDir + "\\" + "latestBackup")
-    os.system("mklink /J " + backupDir + "\\" + "latestBackup " +
-        backupDir + "\\" + datetimeString)
+
+    # deleteBackups(name, keep)
 
 def main():
-    sourceDir= "testOrdner" + "/"
+    sourceDir= "testOrdner"
     backupDir= "backupOrdner"
-    doBackup(sourceDir, backupDir)
+    doBackup(sourceDir, backupDir, name="test")
 
 if __name__ == "__main__":
     main()
