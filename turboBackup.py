@@ -1,19 +1,32 @@
 #!/usr/bin/env python3
 
 # TODO
-# OS compatability
-# keep Variable -> keep certain amount of backups, delete the rest
 # argparse
-# --delete flag
 
 import os
+import shutil
 import datetime
+import platform
 
-def deleteBackups(pattern, keep):
-    pass
+def deleteBackups(backupDir, pattern, keep):
     directoryList= os.listdir(backupDir)
-    if(directoryList):
-        directoryList.sort()
+    if(not directoryList):
+        return
+    
+    patternFiltered=[]
+    for i in directoryList:
+        if(i.endswith(pattern)):
+            patternFiltered.append(i)
+
+    if(len(patternFiltered) <= keep):
+        return
+    
+    patternFiltered.sort()
+    toDelete= patternFiltered[0:len(patternFiltered)-keep]
+
+    for i in toDelete:
+        shutil.rmtree(backupDir + "/" + i)    
+
 
 def doBackup(sourceDir, backupDir, name="", keep=0):
     datetimeString= (datetime.datetime.now()).strftime("%Y-%m-%d_%H-%M-%S")
@@ -28,22 +41,31 @@ def doBackup(sourceDir, backupDir, name="", keep=0):
     if(directoryList):
         latestBackup= max(directoryList)        
 
+    if(platform.system() == "Windows"):
+        os.system(
+            "rsync -a " +
+            "--delete " +
+            "--link-dest " + ".\\..\\" + latestBackup + " " +
+            ".\\" + sourceDir + " " +
+            ".\\" + backupDir + "\\" + datetimeString + name
+        )
     
-    os.system(
-        "rsync -av " +
-        "--link-dest " + ".\\..\\" + latestBackup + " " +
-        ".\\" + sourceDir + " " +
-        ".\\" + backupDir + "\\" + datetimeString + name
-    )
-
+    if((platform.system() == "Linux") or (platform.system() == "Darwin")):
+        os.system(
+            "rsync -av " +
+            "--delete " +
+            "--link-dest " + "./../" + latestBackup + " " +
+            "./" + sourceDir + " " +
+            "./" + backupDir + "/" + datetimeString + name
+        )
 
     if(keep > 0):
-        deleteBackups(name, keep)
+        deleteBackups(backupDir, name, keep)
 
 def main():
     sourceDir= "testOrdner"
     backupDir= "backupOrdner"
-    doBackup(sourceDir, backupDir, name="test")
+    doBackup(sourceDir, backupDir, name="test", keep=5)
 
 if __name__ == "__main__":
     main()
