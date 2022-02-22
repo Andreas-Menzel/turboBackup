@@ -1,3 +1,3 @@
 # turboBackup
 
-TurboBackup is a rclone Backup utility.
+TurboBackup is a rsync Backup utility.
