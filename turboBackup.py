@@ -74,7 +74,14 @@ def pathResolveWrapper(sourceDir, backupDir, name="", keep=0):
 	doBackup(sourceDir, backupDir, name=name, keep=keep)
 
 def main():
-	parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser(description=
+		"""TurboBackup is a rsync Backup utility. It copys the content of a
+		source directory to a destination directory.
+		It will create a new subdirectory with a timestamp as the name 
+		with each execution. Every subdirectory is going to contain hardlinks 
+		to the instances of files in the previous subdirectorys, 
+		except if changes were made to the file, effectivley making the 
+		subdirectorys snapshots of the source directory.""")
 	parser.add_argument("sourceDir", help = "path to source directory")
 	parser.add_argument("backupDir", help = "path to backup directory")
 	parser.add_argument('-n', '--name', 
