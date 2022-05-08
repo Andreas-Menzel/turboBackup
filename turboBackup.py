@@ -162,7 +162,7 @@ def main():
 	parser.add_argument("sourceDir", help = "path to source directory")
 	parser.add_argument("backupDir", help = "path to backup directory")
 	parser.add_argument('-n', '--name',
-		help="name to append to the incremental backup subdirectories", default = "")
+		help="name to append to the incremental backup subdirectories", default = "backup")
 	parser.add_argument('-k', '--keep', type= int,
 		help="if a number is provided, this scirpt will delete all backups with the specified name (0 does not delete any backups)", default= 0)
 	parser.add_argument('-p', '--passthrough',
