@@ -32,6 +32,7 @@ import datetime
 import platform
 from pathlib import Path, PurePosixPath
 import re
+import subprocess
 
 def deleteBackups(baseDirectory, listToDelete, dryRun=True):
 	if dryRun:
@@ -65,7 +66,7 @@ def getUncompletedBackup(directoryList):
 def doBackupAndCleanup(sourceDir, backupDir, name="backup", keep=0, additionalOptions="", dryRun=True):
 	if not os.path.exists(sourceDir):
 		raise Exception("Source Directory was not found")
-	if keep <= 0:
+	if keep < 0:
 		raise Exception("keep can not be below 0")
 	if not re.search('^[A-Za-z0-9]+$', name):
 		raise Exception("name can only contain A-Z, a-z and 0-9")
@@ -96,7 +97,8 @@ def doBackupAndCleanup(sourceDir, backupDir, name="backup", keep=0, additionalOp
 
 		if directoryStringList:
 			relativeLinkDestDir= Path(max(directoryStringList))
-
+	else:
+		createDir(backupDir / Path(relativeNewDir), dryRun=dryRun)
 
 	executeRsyncCommand(sourceDir, backupDir, relativeNewDir,
 						relativeLinkDestDir=relativeLinkDestDir,
@@ -135,7 +137,7 @@ def executeRsyncCommand(sourceDir, backupDir, relativeNewDir, relativeLinkDestDi
 	if dryRun:
 		print(f"os.system({commandToRun})")
 	else:
-		os.system(commandToRun)
+		subprocess.check_call(commandToRun, shell=True)
 
 def generateRsyncWindowsPathString(path):
 	path= str(PurePosixPath(path))
