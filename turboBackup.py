@@ -42,7 +42,6 @@ def deleteBackups(baseDirectory, listToDelete, dryRun=True):
 		for i in listToDelete:
 			shutil.rmtree(baseDirectory / Path(i))
 
-#
 def rename(directory, oldName, newName, dryRun=True):
 	if dryRun:
 		print(f"shutil.move({directory / oldName}, {directory / newName})")
